@@ -9,6 +9,8 @@ main() {
 SRC="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
 [[ -f /etc/importy/instalacja.conf ]] || { echo "Nie znalazłem poprzedniej instalacji — użyj deploy/instaluj-apache.sh."; exit 1; }
 
+# Starsze instalatory zdejmowały +x ze skryptów, gdy repozytorium leżało w /opt/importy — przywróć.
+chmod +x "$SRC"/deploy/*.sh
 echo "==> Pobieram nową wersję"
 WLASCICIEL="$(stat -c %U "$SRC/.git")"
 DOM="$(getent passwd "$WLASCICIEL" | cut -d: -f6)"
@@ -32,6 +34,6 @@ if [[ -n "$CEL" ]]; then
 else
   "${G[@]}" pull --ff-only
 fi
-exec "$SRC/deploy/instaluj-apache.sh" --tak
+exec bash "$SRC/deploy/instaluj-apache.sh" --tak
 }
 main "$@"

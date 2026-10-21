@@ -116,11 +116,16 @@ if ((${#missing[@]})); then apt-get update && apt-get install -y "${missing[@]}"
 
 echo "==> Kopiuję stronę do $DEST"
 install -d -m 755 "$DEST"
-rm -rf "$DEST/www.new"
-cp -r "$SRC/www" "$DEST/www.new"
-rm -rf "$DEST/www" && mv "$DEST/www.new" "$DEST/www"
-chown -R root:root "$DEST"
-find "$DEST" -type d -exec chmod 755 {} + ; find "$DEST" -type f -exec chmod 644 {} +
+if [[ "$(readlink -f "$SRC")" != "$(readlink -f "$DEST")" ]]; then
+  rm -rf "$DEST/www.new"
+  cp -r "$SRC/www" "$DEST/www.new"
+  rm -rf "$DEST/www" && mv "$DEST/www.new" "$DEST/www"
+  chown -R root:root "$DEST/www"
+else
+  echo "    (repozytorium jest w $DEST — strona serwowana prosto z niego)"
+fi
+# Tylko katalog strony — nie ruszamy reszty (repozytorium może leżeć w $DEST, skrypty muszą zostać wykonywalne).
+find "$DEST/www" -type d -exec chmod 755 {} + ; find "$DEST/www" -type f -exec chmod 644 {} +
 
 if ! ((W_BKCRM)); then
   echo "==> Certyfikat HTTPS"

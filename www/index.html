@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Importy do Optimy</title>
+<style>
+  :root {
+    --bg: #f4f5f7; --panel: #ffffff; --ink: #1d2330; --muted: #5f6878; --line: #dfe3ea;
+    --accent: #b3122a; --accent-ink: #ffffff; --accent-soft: #fbe9ec;
+    --ok: #1f7a4d; --ok-soft: #e5f4ec; --warn: #9a5b00; --warn-soft: #fff3dd; --err: #b3261e; --err-soft: #fdecea;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; }
+  header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 10px 20px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 18px; margin: 0; font-weight: 600; }
+  header h1 span { color: var(--accent); }
+  header .sub { color: var(--muted); font-size: 13px; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px 20px 60px; display: grid; gap: 16px; }
+  section.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+  section.card h2 { margin: 0 0 12px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  section.card h2 .num { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 12px; }
+  .row { display: flex; gap: 12px 20px; flex-wrap: wrap; align-items: end; }
+  label.f { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+  input[type=text] { font: inherit; color: var(--ink); padding: 7px 9px; border: 1px solid #c9ced8; border-radius: 6px; background: #fff; width: 220px; }
+  input:focus { outline: 2px solid #8fb3ff; border-color: #6f97f0; }
+  label.chk { display: flex; gap: 8px; align-items: center; font-size: 13px; padding-bottom: 7px; }
+  .drop { border: 2px dashed #b9c0cc; border-radius: var(--radius); background: #fafbfc; padding: 28px 16px; text-align: center; color: var(--muted); cursor: pointer; }
+  .drop.over { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .drop strong { color: var(--ink); }
+  .drop input { display: none; }
+  button { font: inherit; border: 1px solid #c3c9d4; background: #fff; color: var(--ink); padding: 7px 14px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+  button:hover:not(:disabled) { background: #f1f3f7; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  button.primary:hover:not(:disabled) { background: #96101f; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .plik { border: 1px solid var(--line); border-radius: var(--radius); margin-top: 12px; overflow: hidden; }
+  .plik .gl { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: #fafbfc; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .plik .gl .nazwa { font-weight: 600; word-break: break-all; }
+  .plik .gl .spacer { flex: 1; }
+  .pill { display: inline-flex; padding: 2px 10px; border-radius: 99px; font-size: 12px; background: #eef0f4; color: var(--muted); }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.err { background: var(--err-soft); color: var(--err); }
+  .plik .opis { padding: 8px 12px; font-size: 13px; color: var(--muted); }
+  details { padding: 0 12px 10px; }
+  summary { cursor: pointer; font-size: 13px; color: var(--muted); padding: 4px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; }
+  td.nowa { color: var(--ok); font-weight: 600; }
+  .akcje { display: flex; gap: 10px; margin-top: 14px; }
+  .uwaga { font-size: 12px; color: var(--muted); margin-top: 10px; }
+  @media (max-width: 600px) { main { padding: 12px 12px 40px; } input[type=text] { width: 100%; } .row > * { flex: 1 1 100%; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Importy <span>→ Optima</span></h1>
+  <div class="sub">uzupełnianie formy płatności w plikach XML przed importem do Comarch Optima</div>
+</header>
+<main>
+  <section class="card">
+    <h2><span class="num">1</span>Ustawienia</h2>
+    <div class="row">
+      <label class="f">Forma płatności
+        <input type="text" id="forma" value="gotówka" list="formy" autocomplete="off">
+        <datalist id="formy">
+          <option value="gotówka"><option value="przelew"><option value="karta"><option value="kompensata"><option value="czek">
+        </datalist>
+      </label>
+      <label class="chk"><input type="checkbox" id="tylkoPuste" checked> tylko puste pola (istniejących form nie ruszaj)</label>
+    </div>
+    <div class="uwaga">Uzupełniane są znaczniki <code>FORMA_PLATNOSCI</code> (dokument) i <code>FORMA_PLATNOSCI_PLAT</code> (płatność). Forma musi istnieć w Optimie (Konfiguracja firmy → Kasa/Bank → Formy płatności) pod dokładnie tą nazwą.</div>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">2</span>Pliki XML</h2>
+    <label class="drop" id="drop">
+      <input type="file" id="pliki" accept=".xml,text/xml,application/xml" multiple>
+      <strong>Przeciągnij tu pliki XML</strong> albo kliknij, żeby wybrać.<br>
+      <small>Pliki nie są nigdzie wysyłane — wszystko dzieje się w przeglądarce.</small>
+    </label>
+    <div id="wyniki"></div>
+    <div class="akcje" id="akcje" hidden>
+      <button class="primary" id="pobierzWszystkie">Pobierz poprawione</button>
+      <button id="wyczysc">Wyczyść</button>
+    </div>
+  </section>
+</main>
+<script src="popraw.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
